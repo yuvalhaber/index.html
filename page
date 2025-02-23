@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>פרוטוקול SAFE-AI</title>
+    <style>
+        :root {
+            --primary-color: #6a5acd;
+            --secondary-color: #4b0082;
+            --background-color: #f0f2f5;
+            --text-color: #333;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e6e9f0 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .institute-name {
+            color: var(--secondary-color);
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .model-name {
+            color: var(--secondary-color);
+            font-size: 24px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .citation {
+            font-size: 16px;
+            color: #666;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .protocol-intro {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .stage-heading {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 30px 0 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .stage-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .english-name {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-right: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        td, th {
+            border: 1px solid #ddd;
+            padding: 15px;
+            vertical-align: top;
+            text-align: right;
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        ul {
+            margin: 0;
+            padding-right: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .troubleshooting-section {
+            margin-top: 40px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .troubleshooting-section h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .implementation-note {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+            border-right: 4px solid var(--primary-color);
+        }
+
+        strong {
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="institute-name">מכון המחקר והפיתוח של השלישי המלאכותי</div>
+            <div class="model-name">SAFE-AI - פרוטוקול לשימוש בכלי בינה מלאכותית במרחב הטיפולי</div>
+            <div class="citation">
+                Haber, Y., Shoval, D. H., Levkovich, I., Yinon, D., Gigi, K., Pen, O., Angert, T., & Elyoseph, Z. (2024). The externalization of internal experiences in psychotherapy through generative artificial intelligence: A theoretical, clinical, and ethical analysis.
+            </div>
+        </div>
+
+        <div class="protocol-intro">
+            <h2>מטרת הפרוטוקול</h2>
+            <p>פרוטוקול SAFE-AI פותח כמסגרת עבודה מובנית לשילוב אחראי של בינה מלאכותית במרחב הטיפולי. הפרוטוקול מספק למטפלים כלים והנחיות בסיסיות להטמעה בטוחה ואתית של טכנולוגיות בינה מלאכותית בתהליך הטיפולי, תוך שמירה על הברית הטיפולית והבטחת בטיחות המטופל.</p>
+            <p>הפרוטוקול מתמקד בניהול המרחב הטיפולי המשולש - מטפל, מטופל ובינה מלאכותית - ומציע מסגרת עבודה דינמית המתייחסת לאתגרים הייחודיים של שילוב טכנולוגיה מתקדמת במרחב הטיפולי.</p>
+        </div>
+
+        <div class="stage-heading">
+            S - סינון והתארגנות
+            <span class="english-name">(Screening & Setup)</span>
+        </div>
+        <div class="stage-content">
+            <table>
+                <tr>
+                    <td>
+                        <strong>שיקולים קליניים ואתיים כלליים:</strong>
+                        <ul>
+                            <li>הערכת מוכנות המטפל והמטופל</li>
+                            <li>הכנת המרחב הטיפולי</li>
+                            <li>הסכמה מדעת</li>
+                            <li>רגישות תרבותית/מגדרית</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>שיקולים ספציפיים לכלי החצנה (VIVI/DIVI):</strong>
+                        <ul>
+                            <li>הערכת יכולת דיאלוג פנימי</li>
+                            <li>הכנת הברית הטיפולית כולל הערכת היתרונות והאתגרים</li>
+                            <li>הסכמת ייצוג הקול הפנימי</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>התערבויות קליניות:</strong>
+                        "בהתבסס על תהליך הטיפול שלנו, הייתי רוצה להציע שימוש בכלי בינה מלאכותית כדי להעשיר את העבודה הטיפולית. האם תרצה לשמוע עוד על האפשרות הזו?"
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="stage-heading">
+            A - התאמה וכוונון
+            <span class="english-name">(Alignment & Attunement)</span>
+        </div>
+        <div class="stage-content">
+            <table>
+                <tr>
+                    <td>
+                        <strong>שיקולים קליניים ואתיים כלליים:</strong>
+                        <ul>
+                            <li>ניטור הברית הטיפולית</li>
+                            <li>ניהול המרחב הטיפולי המשולש</li>
+                            <li>אימות הסכמה מתמשך</li>
+                            <li>ניהול דינמיקות כוח</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>שיקולים ספציפיים לכלי החצנה (VIVI/DIVI):</strong>
+                        <ul>
+                            <li>התאמת אפיון הקול</li>
+                            <li>דיוק ייצוג הבינה המלאכותית</li>
+                            <li>נוכחות קלינית פעילה</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>התערבויות קליניות:</strong>
+                        "בוא נוודא שהשימוש בכלי משרת את מטרות הטיפול שלנו. איך אתה חווה את האינטראקציה עם הכלי?"
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="stage-heading">
+            F - הנחיה וניטור
+            <span class="english-name">(Facilitation & Monitoring)</span>
+        </div>
+        <div class="stage-content">
+            <table>
+                <tr>
+                    <td>
+                        <strong>שיקולים קליניים ואתיים כלליים:</strong>
+                        <ul>
+                            <li>ניהול התהליך הטיפולי</li>
+                            <li>כוונון אמפתי</li>
+                            <li>הגנה על האוטונומיה של המטופל</li>
+                            <li>שמירה על סמכות אפיסטמולוגית</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>שיקולים ספציפיים לכלי החצנה (VIVI/DIVI):</strong>
+                        <ul>
+                            <li>התאמות בזמן אמת</li>
+                            <li>טיפול בהעברה</li>
+                            <li>ניהול מצבי כשל</li>
+                            <li>התאמת אופני ההתערבות</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>התערבויות קליניות:</strong>
+                        <ul>
+                            <li>מטא-תצפית: "אני שם לב לשינויים באופן שבו אתה מגיב לכלי..."</li>
+                            <li>התערבות ישירה: "בוא נחקור יחד את התגובות שעולות בך"</li>
+                            <li>התאמה משותפת: "האם נרצה לשנות משהו באופן השימוש בכלי?"</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="stage-heading">
+            E - הערכה ושילוב
+            <span class="english-name">(Evaluation & Integration)</span>
+        </div>
+        <div class="stage-content">
+            <table>
+                <tr>
+                    <td>
+                        <strong>שיקולים קליניים ואתיים כלליים:</strong>
+                        <ul>
+                            <li>תיעוד קליני</li>
+                            <li>הערכת האינטגרציה הטיפולית</li>
+                            <li>הערכת השפעה על הברית הטיפולית</li>
+                            <li>סקירת השפעת המפגש</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>שיקולים ספציפיים לכלי החצנה (VIVI/DIVI):</strong>
+                        <ul>
+                            <li>שילוב עבודת הקול</li>
+                            <li>מנטליזציה</li>
+                            <li>סקירת דיוק הייצוג</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>התערבויות קליניות:</strong>
+                        "איך היה עבורך השימוש בכלי? מה הרגיש מועיל או מאתגר?"
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="troubleshooting-section">
+            <h2>התמודדות עם קשיים במהלך שימוש בכלי בינה מלאכותית בטיפול</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>סוג הבעיה</th>
+                        <th>קשיים אפשריים</th>
+                        <th>דרכי התמודדות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>כשל אמפתי</strong></td>
+                        <td>
+                            <ul>
+                                <li>תגובות AI שאינן תואמות את חווית המטופל</li>
+                                <li>ייצוגים שמרגישים זרים או מנוכרים</li>
+                                <li>תחושת חוסר הבנה מצד הכלי</li>
+                                <li>תגובות לא מותאמות רגשית</li>
+</ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>עצירה מיידית והכרה בכשל</li>
+                                <li>עיבוד החוויה עם המטופל</li>
+                                <li>שימוש בכשל כחומר טיפולי</li>
+                                <li>התאמה מחודשת של הפרמטרים בכלי</li>
+                                <li>חיזוק הקשר הטיפולי האנושי</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>שיבוש בברית הטיפולית</strong></td>
+                        <td>
+                            <ul>
+                                <li>הסטת הקשר הטיפולי לכיוון הכלי</li>
+                                <li>תחושת ניכור מהמטפל</li>
+                                <li>העברה לא מותאמת לכלי</li>
+                                <li>ערעור על סמכות המטפל</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>חיזוק הברית האנושית</li>
+                                <li>הבהרת תפקיד הכלי כעזר טיפולי</li>
+                                <li>עיבוד תהליכי העברה</li>
+                                <li>הגדרה מחודשת של גבולות השימוש</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>בעיות ייצוג תרבותי</strong></td>
+                        <td>
+                            <ul>
+                                <li>הטיות תרבותיות בתגובות AI</li>
+                                <li>חוסר רגישות תרבותית</li>
+                                <li>שימוש בדימויים לא מותאמים תרבותית</li>
+                                <li>אי הבנה של הקשרים תרבותיים</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>התאמת הנחיות לרקע התרבותי</li>
+                                <li>שיחה פתוחה על פערים תרבותיים</li>
+                                <li>שימוש במטפל כמתווך תרבותי</li>
+                                <li>הטמעת הנחיות תרבותיות ספציפיות</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>איזון טכני-טיפולי</strong></td>
+                        <td>
+                            <ul>
+                                <li>קשיים טכניים בשימוש</li>
+                                <li>הסחת דעת מהתהליך הטיפולי</li>
+                                <li>מיקוד יתר בטכנולוגיה</li>
+                                <li>חרדה טכנולוגית</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>הדרכה טכנית מקדימה</li>
+                                <li>שמירה על מיקוד טיפולי</li>
+                                <li>הגבלת זמן העיסוק בהיבטים טכניים</li>
+                                <li>בניית ביטחון הדרגתי בשימוש</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="implementation-note">
+            <strong>הערת יישום:</strong> פרוטוקול זה משמש כמסגרת דינמית לשילוב בינה מלאכותית בטיפול, תוך התייחסות לאתגרים הייחודיים שזוהו במחקר. יש להתאים כל אלמנט להקשרים קליניים אינדיבידואליים, תוך שמירה על סטנדרטים בסיסיים של בטיחות ואתיקה.
+        </div>
+    </div>
+</body>
+</html>
