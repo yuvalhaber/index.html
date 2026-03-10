@@ -4,394 +4,580 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מבחן בנדר - Bender Visual Motor Gestalt Test</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+        html, body, #root { width: 100%; height: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: #fff; }
+
+        /* Utility classes */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-1 { flex: 1; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .shrink-0 { flex-shrink: 0; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .w-screen { width: 100vw; }
+        .h-screen { height: 100vh; }
+        .overflow-hidden { overflow: hidden; }
+        .overflow-y-auto { overflow-y: auto; }
+        .gap-2 { gap: 0.5rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 0.75rem; }
+        .pt-1 { padding-top: 0.25rem; }
+        .pt-2 { padding-top: 0.5rem; }
+        .pt-3 { padding-top: 0.75rem; }
+        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .px-8 { padding-left: 2rem; padding-right: 2rem; }
+        .p-4 { padding: 1rem; }
+        .rounded { border-radius: 0.25rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-full { border-radius: 9999px; }
+        .border { border: 1px solid; }
+        .border-b { border-bottom: 1px solid; }
+        .border-t { border-top: 1px solid; }
+        .border-b-4 { border-bottom: 4px dashed #d1d5db; }
+
+        .text-xs { font-size: 0.75rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .text-5xl { font-size: 3rem; }
+
+        .bg-white { background: #fff; }
+        .bg-black { background: #000; }
+        .bg-gray-50 { background: #f9fafb; }
+        .bg-gray-100 { background: #f3f4f6; }
+        .bg-gray-200 { background: #e5e7eb; }
+        .bg-blue-500 { background: #3b82f6; }
+        .bg-amber-50 { background: #fffbeb; }
+        .bg-amber-200 { background: #fde68a; }
+        .bg-amber-500 { background: #f59e0b; }
+
+        .text-white { color: #fff; }
+        .text-gray-400 { color: #9ca3af; }
+        .text-gray-500 { color: #6b7280; }
+        .text-gray-600 { color: #4b5563; }
+        .text-gray-700 { color: #374151; }
+        .text-gray-800 { color: #1f2937; }
+        .text-blue-600 { color: #2563eb; }
+        .text-amber-700 { color: #b45309; }
+        .text-amber-800 { color: #92400e; }
+
+        .border-gray-200 { border-color: #e5e7eb; }
+        .border-gray-300 { border-color: #d1d5db; }
+        .border-amber-200 { border-color: #fde68a; }
+
+        .max-w-sm { max-width: 24rem; }
+        .max-w-xs { max-width: 20rem; }
+
+        .opacity-60 { opacity: 0.6; }
+
+        .transition-all { transition: all 0.15s ease; }
+
+        button { cursor: pointer; border: none; background: none; font: inherit; }
+        button:hover { opacity: 0.9; }
+
+        .btn-outline { padding: 0.25rem 0.75rem; font-size: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.25rem; background: #fff; }
+        .btn-outline:hover { background: #f3f4f6; }
+        .btn-primary { padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #000; color: #fff; border-radius: 0.25rem; }
+        .btn-primary:hover { background: #1f2937; }
+        .btn-lg { padding: 0.75rem 2rem; font-size: 1.125rem; font-weight: 600; background: #000; color: #fff; border-radius: 0.75rem; }
+        .btn-lg:hover { background: #1f2937; }
+
+        .progress-bar { height: 0.25rem; background: #f3f4f6; }
+        .progress-fill { height: 100%; background: #3b82f6; transition: width 0.3s ease; }
+
+        .score-bar-track { width: 6rem; height: 0.5rem; background: #e5e7eb; border-radius: 9999px; overflow: hidden; }
+        .score-bar-fill { height: 100%; background: #3b82f6; border-radius: 9999px; }
+
+        .recall-bar-track { width: 100%; height: 0.75rem; background: #fde68a; border-radius: 9999px; overflow: hidden; }
+        .recall-bar-fill { height: 100%; background: #f59e0b; border-radius: 9999px; }
+
+        canvas { display: block; }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
-const { useState, useRef, useEffect, useCallback } = React;
+<script>
+(function() {
+    'use strict';
 
-const SHAPES = [
-  {
-    id: 'A', name: 'צורה A',
-    draw: (ctx, w, h) => {
-      ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.setLineDash([]);
-      ctx.beginPath(); ctx.arc(w*0.33, h*0.5, Math.min(w,h)*0.2, 0, Math.PI*2); ctx.stroke();
-      const s = Math.min(w,h)*0.38;
-      ctx.strokeRect(w*0.53, h*0.5-s/2, s, s);
-    },
-  },
-  {
-    id: '1', name: 'צורה 1',
-    draw: (ctx, w, h) => {
-      ctx.fillStyle = '#111';
-      const n=12, x0=w*0.1, x1=w*0.9, step=(x1-x0)/(n-1);
-      for(let i=0;i<n;i++){ctx.beginPath();ctx.arc(x0+i*step,h*0.5,6,0,Math.PI*2);ctx.fill();}
-    },
-  },
-  {
-    id: '2', name: 'צורה 2',
-    draw: (ctx, w, h) => {
-      ctx.fillStyle = '#111';
-      for(let r=0;r<3;r++) for(let c=0;c<6;c++){
-        ctx.beginPath();
-        ctx.arc(w*0.12+c*(w*0.13)+r*(w*0.07), h*0.3+r*(h*0.2), 6, 0, Math.PI*2);
-        ctx.fill();
-      }
-    },
-  },
-  {
-    id: '4', name: 'צורה 4',
-    draw: (ctx, w, h) => {
-      ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.setLineDash([]);
-      ctx.beginPath();
-      ctx.moveTo(w*0.12,h*0.72); ctx.lineTo(w*0.12,h*0.28);
-      ctx.lineTo(w*0.42,h*0.28); ctx.lineTo(w*0.42,h*0.72);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(w*0.54,h*0.28);
-      ctx.bezierCurveTo(w*0.72,h*0.28,w*0.58,h*0.72,w*0.82,h*0.72);
-      ctx.stroke();
-    },
-  },
-  {
-    id: '8', name: 'צורה 8',
-    draw: (ctx, w, h) => {
-      ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.setLineDash([]);
-      const cx=w/2,cy=h/2,ow=w*0.37,oh=h*0.4;
-      ctx.beginPath(); ctx.moveTo(cx,cy-oh); ctx.lineTo(cx+ow,cy); ctx.lineTo(cx,cy+oh); ctx.lineTo(cx-ow,cy); ctx.closePath(); ctx.stroke();
-      const iw=ow*0.42,ih=oh*0.38;
-      ctx.beginPath(); ctx.moveTo(cx,cy-ih); ctx.lineTo(cx+iw,cy); ctx.lineTo(cx,cy+ih); ctx.lineTo(cx-iw,cy); ctx.closePath(); ctx.stroke();
-    },
-  },
-];
+    // ---- SHAPES ----
+    var SHAPES = [
+        {
+            id: 'A', name: 'צורה A',
+            draw: function(ctx, w, h) {
+                ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.setLineDash([]);
+                ctx.beginPath(); ctx.arc(w*0.33, h*0.5, Math.min(w,h)*0.2, 0, Math.PI*2); ctx.stroke();
+                var s = Math.min(w,h)*0.38;
+                ctx.strokeRect(w*0.53, h*0.5-s/2, s, s);
+            }
+        },
+        {
+            id: '1', name: 'צורה 1',
+            draw: function(ctx, w, h) {
+                ctx.fillStyle = '#111';
+                var n=12, x0=w*0.1, x1=w*0.9, step=(x1-x0)/(n-1);
+                for(var i=0;i<n;i++){ctx.beginPath();ctx.arc(x0+i*step,h*0.5,6,0,Math.PI*2);ctx.fill();}
+            }
+        },
+        {
+            id: '2', name: 'צורה 2',
+            draw: function(ctx, w, h) {
+                ctx.fillStyle = '#111';
+                for(var r=0;r<3;r++) for(var c=0;c<6;c++){
+                    ctx.beginPath();
+                    ctx.arc(w*0.12+c*(w*0.13)+r*(w*0.07), h*0.3+r*(h*0.2), 6, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+        },
+        {
+            id: '4', name: 'צורה 4',
+            draw: function(ctx, w, h) {
+                ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(w*0.12,h*0.72); ctx.lineTo(w*0.12,h*0.28);
+                ctx.lineTo(w*0.42,h*0.28); ctx.lineTo(w*0.42,h*0.72);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(w*0.54,h*0.28);
+                ctx.bezierCurveTo(w*0.72,h*0.28,w*0.58,h*0.72,w*0.82,h*0.72);
+                ctx.stroke();
+            }
+        },
+        {
+            id: '8', name: 'צורה 8',
+            draw: function(ctx, w, h) {
+                ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.setLineDash([]);
+                var cx=w/2,cy=h/2,ow=w*0.37,oh=h*0.4;
+                ctx.beginPath(); ctx.moveTo(cx,cy-oh); ctx.lineTo(cx+ow,cy); ctx.lineTo(cx,cy+oh); ctx.lineTo(cx-ow,cy); ctx.closePath(); ctx.stroke();
+                var iw=ow*0.42,ih=oh*0.38;
+                ctx.beginPath(); ctx.moveTo(cx,cy-ih); ctx.lineTo(cx+iw,cy); ctx.lineTo(cx,cy+ih); ctx.lineTo(cx-iw,cy); ctx.closePath(); ctx.stroke();
+            }
+        }
+    ];
 
-function getFeedback(score) {
-  if (score>=90) return 'מדהים!';
-  if (score>=75) return 'מצוין!';
-  if (score>=60) return 'טוב!';
-  if (score>=40) return 'לא רע';
-  return 'המשך לנסות';
-}
+    // ---- HELPERS ----
+    function getFeedback(score) {
+        if (score>=90) return 'מדהים!';
+        if (score>=75) return 'מצוין!';
+        if (score>=60) return 'טוב!';
+        if (score>=40) return 'לא רע';
+        return 'המשך לנסות';
+    }
 
-function computeRoundness(pts) {
-  if(pts.length<5) return 0;
-  const cx=pts.reduce((a,p)=>a+p.x,0)/pts.length;
-  const cy=pts.reduce((a,p)=>a+p.y,0)/pts.length;
-  const radii=pts.map(p=>Math.sqrt((p.x-cx)**2+(p.y-cy)**2));
-  const avg=radii.reduce((a,b)=>a+b,0)/radii.length;
-  if(avg<5) return 0;
-  const v=Math.sqrt(radii.reduce((a,r)=>a+(r-avg)**2,0)/radii.length);
-  return Math.max(0,100-(v/avg)*150);
-}
+    function computeRoundness(pts) {
+        if(pts.length<5) return 0;
+        var cx=0,cy=0;
+        for(var i=0;i<pts.length;i++){cx+=pts[i].x;cy+=pts[i].y;}
+        cx/=pts.length; cy/=pts.length;
+        var radii=[];
+        for(var i=0;i<pts.length;i++) radii.push(Math.sqrt(Math.pow(pts[i].x-cx,2)+Math.pow(pts[i].y-cy,2)));
+        var avg=0; for(var i=0;i<radii.length;i++) avg+=radii[i]; avg/=radii.length;
+        if(avg<5) return 0;
+        var sum=0; for(var i=0;i<radii.length;i++) sum+=Math.pow(radii[i]-avg,2);
+        var v=Math.sqrt(sum/radii.length);
+        return Math.max(0,100-(v/avg)*150);
+    }
 
-function evaluateShape(id, pts, w, h) {
-  if(pts.length<10) return 0;
-  if(id==='A'){
-    const left=pts.filter(p=>p.x<w/2), right=pts.filter(p=>p.x>=w/2);
-    return Math.min(100,Math.round(computeRoundness(left)*0.6+(left.length>5&&right.length>5?40:0)));
-  }
-  if(id==='1'){
-    const ys=pts.map(p=>p.y),avg=ys.reduce((a,b)=>a+b,0)/ys.length;
-    const yv=Math.sqrt(ys.reduce((a,y)=>a+(y-avg)**2,0)/ys.length);
-    const xs=pts.map(p=>p.x), span=Math.max(...xs)-Math.min(...xs);
-    return Math.min(100,Math.round(Math.max(0,100-(yv/(h*0.008))*10)*0.6+(span/(w*0.6))*40));
-  }
-  if(id==='2'){
-    const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
-    return Math.min(100,Math.round(((Math.max(...ys)-Math.min(...ys))/(h*0.25))*50+((Math.max(...xs)-Math.min(...xs))/(w*0.5))*50));
-  }
-  if(id==='4'){
-    const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
-    return Math.min(100,Math.round(((Math.max(...xs)-Math.min(...xs))>w*0.35?50:25)+((Math.max(...ys)-Math.min(...ys))>h*0.25?50:25)));
-  }
-  if(id==='8') return Math.min(100,Math.round(computeRoundness(pts)));
-  return 50;
-}
+    function evaluateShape(id, pts, w, h) {
+        if(pts.length<10) return 0;
+        if(id==='A'){
+            var left=pts.filter(function(p){return p.x<w/2;}), right=pts.filter(function(p){return p.x>=w/2;});
+            return Math.min(100,Math.round(computeRoundness(left)*0.6+(left.length>5&&right.length>5?40:0)));
+        }
+        if(id==='1'){
+            var ys=pts.map(function(p){return p.y;}),avg=0;
+            for(var i=0;i<ys.length;i++) avg+=ys[i]; avg/=ys.length;
+            var yv=0; for(var i=0;i<ys.length;i++) yv+=Math.pow(ys[i]-avg,2); yv=Math.sqrt(yv/ys.length);
+            var xs=pts.map(function(p){return p.x;}), span=Math.max.apply(null,xs)-Math.min.apply(null,xs);
+            return Math.min(100,Math.round(Math.max(0,100-(yv/(h*0.008))*10)*0.6+(span/(w*0.6))*40));
+        }
+        if(id==='2'){
+            var xs=pts.map(function(p){return p.x;}),ys=pts.map(function(p){return p.y;});
+            return Math.min(100,Math.round(((Math.max.apply(null,ys)-Math.min.apply(null,ys))/(h*0.25))*50+((Math.max.apply(null,xs)-Math.min.apply(null,xs))/(w*0.5))*50));
+        }
+        if(id==='4'){
+            var xs=pts.map(function(p){return p.x;}),ys=pts.map(function(p){return p.y;});
+            return Math.min(100,Math.round(((Math.max.apply(null,xs)-Math.min.apply(null,xs))>w*0.35?50:25)+((Math.max.apply(null,ys)-Math.min.apply(null,ys))>h*0.25?50:25)));
+        }
+        if(id==='8') return Math.min(100,Math.round(computeRoundness(pts)));
+        return 50;
+    }
 
-function SketchCanvas({ strokes, onAddStroke, locked, overlayScore }) {
-  const ref = useRef(null);
-  const drawing = useRef(false);
-  const current = useRef([]);
+    function detectShapeCount(strokes) {
+        if(!strokes.length) return 0;
+        var groups = [];
+        strokes.forEach(function(s) {
+            if(!s.length) return;
+            var mx=s[Math.floor(s.length/2)].x, my=s[Math.floor(s.length/2)].y;
+            var found=false;
+            for(var i=0;i<groups.length;i++){
+                var g=groups[i];
+                if(Math.abs(g.cx-mx)<130&&Math.abs(g.cy-my)<130){
+                    g.pts=g.pts.concat(s); var sum_x=0,sum_y=0;
+                    for(var j=0;j<g.pts.length;j++){sum_x+=g.pts[j].x;sum_y+=g.pts[j].y;}
+                    g.cx=sum_x/g.pts.length; g.cy=sum_y/g.pts.length;
+                    found=true; break;
+                }
+            }
+            if(!found) groups.push({cx:mx,cy:my,pts:s.slice()});
+        });
+        return groups.length;
+    }
 
-  const setup = useCallback(() => {
-    const c = ref.current; if(!c) return;
-    const dpr = window.devicePixelRatio||1;
-    c.width  = c.offsetWidth  * dpr;
-    c.height = c.offsetHeight * dpr;
-    c.getContext('2d').scale(dpr,dpr);
-  }, []);
-
-  const render = useCallback(() => {
-    const c = ref.current; if(!c) return;
-    const ctx = c.getContext('2d');
-    const w=c.offsetWidth, h=c.offsetHeight;
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
-    ctx.strokeStyle='#f0f0f0'; ctx.lineWidth=1;
-    for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
-    for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
-    const drawPts = (pts, color) => {
-      if(pts.length<2) return;
-      ctx.strokeStyle=color; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round';
-      ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
-      for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
-      ctx.stroke();
+    // ---- STATE ----
+    var state = {
+        phase: 'copy',
+        shapeIdx: 0,
+        copyStrokes: [],
+        copyScore: null,
+        allCopyScores: [],
+        recallStrokes: [],
+        recallResults: null
     };
-    const color = overlayScore!=null ? '#2563eb' : '#111';
-    strokes.forEach(s=>drawPts(s,color));
-    drawPts(current.current, '#111');
-    if(overlayScore!=null){
-      ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.fillRect(0,0,w,h);
-      strokes.forEach(s=>drawPts(s,'#2563eb'));
-      ctx.fillStyle='#111';
-      ctx.font=`bold ${Math.round(h*0.2)}px system-ui`; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(`${overlayScore}/100`, w/2, h/2-h*0.1);
-      ctx.font=`${Math.round(h*0.075)}px system-ui`;
-      ctx.fillText(getFeedback(overlayScore), w/2, h/2+h*0.09);
+
+    // ---- CANVAS DRAWING ----
+    function setupCanvas(canvas) {
+        var dpr = window.devicePixelRatio || 1;
+        canvas.width = canvas.offsetWidth * dpr;
+        canvas.height = canvas.offsetHeight * dpr;
+        canvas.getContext('2d').scale(dpr, dpr);
     }
-  }, [strokes, overlayScore]);
 
-  useEffect(() => { setup(); render(); }, []);
-  useEffect(() => { render(); }, [strokes, overlayScore]);
-  useEffect(() => {
-    const c = ref.current; if(!c) return;
-    const onResize = () => { setup(); render(); };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [render]);
+    function renderSketch(canvas, strokes, currentPts, overlayScore, locked) {
+        var ctx = canvas.getContext('2d');
+        var w = canvas.offsetWidth, h = canvas.offsetHeight;
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+        ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1;
+        for(var x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+        for(var y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
 
-  const pos = (e) => {
-    const r = ref.current.getBoundingClientRect();
-    if(e.touches) return {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top};
-    return {x:e.clientX-r.left, y:e.clientY-r.top};
-  };
-  const onDown = (e) => { if(locked) return; e.preventDefault(); drawing.current=true; current.current=[pos(e)]; };
-  const onMove = (e) => { if(!drawing.current||locked) return; e.preventDefault(); current.current.push(pos(e)); render(); };
-  const onUp   = (e) => {
-    if(!drawing.current) return; e.preventDefault(); drawing.current=false;
-    if(current.current.length>2) onAddStroke([...current.current]);
-    current.current=[]; render();
-  };
+        function drawPts(pts, color) {
+            if(pts.length<2) return;
+            ctx.strokeStyle=color; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round';
+            ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+            for(var i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
+            ctx.stroke();
+        }
 
-  return (
-    <canvas ref={ref} className="w-full h-full"
-      style={{cursor:locked?'default':'crosshair', touchAction:'none'}}
-      onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp}
-      onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}
-    />
-  );
-}
+        var color = overlayScore != null ? '#2563eb' : '#111';
+        strokes.forEach(function(s){drawPts(s,color);});
+        if(currentPts && currentPts.length) drawPts(currentPts, '#111');
 
-function ShapeCanvas({ shapeFn }) {
-  const ref = useRef(null);
-  const paint = useCallback(() => {
-    const c = ref.current; if(!c) return;
-    const w=c.offsetWidth, h=c.offsetHeight;
-    if(w===0||h===0) return;
-    const dpr=window.devicePixelRatio||1;
-    c.width=w*dpr; c.height=h*dpr;
-    const ctx=c.getContext('2d');
-    ctx.scale(dpr,dpr);
-    ctx.fillStyle='#fafafa'; ctx.fillRect(0,0,w,h);
-    shapeFn(ctx,w,h);
-  }, [shapeFn]);
-
-  useEffect(() => {
-    paint();
-    const id = setTimeout(paint, 50);
-    return () => clearTimeout(id);
-  }, [paint]);
-
-  useEffect(() => {
-    const onResize = () => paint();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [paint]);
-
-  return <canvas ref={ref} className="w-full h-full" />;
-}
-
-function detectShapeCount(strokes) {
-  if(!strokes.length) return 0;
-  const groups = [];
-  strokes.forEach(s => {
-    if(!s.length) return;
-    const mx=s[Math.floor(s.length/2)].x, my=s[Math.floor(s.length/2)].y;
-    let found=false;
-    for(const g of groups){
-      if(Math.abs(g.cx-mx)<130&&Math.abs(g.cy-my)<130){
-        g.pts.push(...s); g.cx=g.pts.reduce((a,p)=>a+p.x,0)/g.pts.length; g.cy=g.pts.reduce((a,p)=>a+p.y,0)/g.pts.length;
-        found=true; break;
-      }
+        if(overlayScore != null){
+            ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.fillRect(0,0,w,h);
+            strokes.forEach(function(s){drawPts(s,'#2563eb');});
+            ctx.fillStyle='#111';
+            ctx.font='bold '+Math.round(h*0.2)+'px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(overlayScore+'/100', w/2, h/2-h*0.1);
+            ctx.font=Math.round(h*0.075)+'px system-ui';
+            ctx.fillText(getFeedback(overlayScore), w/2, h/2+h*0.09);
+        }
     }
-    if(!found) groups.push({cx:mx,cy:my,pts:[...s]});
-  });
-  return groups.length;
-}
 
-function BenderTest() {
-  const [phase, setPhase]           = useState('copy');
-  const [shapeIdx, setShapeIdx]     = useState(0);
-  const [copyStrokes, setCopyStrokes] = useState([]);
-  const [copyScore, setCopyScore]   = useState(null);
-  const [allCopyScores, setAllCopyScores] = useState([]);
-  const [recallStrokes, setRecallStrokes] = useState([]);
-  const [recallResults, setRecallResults] = useState(null);
+    function renderShapeCanvas(canvas, shapeFn) {
+        var w=canvas.offsetWidth, h=canvas.offsetHeight;
+        if(w===0||h===0) return;
+        var dpr=window.devicePixelRatio||1;
+        canvas.width=w*dpr; canvas.height=h*dpr;
+        var ctx=canvas.getContext('2d');
+        ctx.scale(dpr,dpr);
+        ctx.fillStyle='#fafafa'; ctx.fillRect(0,0,w,h);
+        shapeFn(ctx,w,h);
+    }
 
-  const shape = SHAPES[shapeIdx];
+    // ---- DRAWING INTERACTION ----
+    var drawingState = { active: false, current: [] };
 
-  const handleCheck = () => {
-    const pts = copyStrokes.flat();
-    const c = document.querySelector('[data-sketch]');
-    const w = c ? c.offsetWidth : 400;
-    const h = c ? c.offsetHeight : 300;
-    setCopyScore(evaluateShape(shape.id, pts, w, h));
-  };
+    function getPos(e, canvas) {
+        var r = canvas.getBoundingClientRect();
+        if(e.touches) return {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top};
+        return {x:e.clientX-r.left, y:e.clientY-r.top};
+    }
 
-  const handleNext = () => {
-    const newScores = [...allCopyScores, {name:shape.name, score:copyScore??0}];
-    setAllCopyScores(newScores);
-    if(shapeIdx+1>=SHAPES.length){ setPhase('transition'); }
-    else { setShapeIdx(i=>i+1); setCopyStrokes([]); setCopyScore(null); }
-  };
+    function attachDrawing(canvas, getStrokes, onAddStroke, isLocked, getScore) {
+        function rerender() {
+            renderSketch(canvas, getStrokes(), drawingState.current, getScore(), isLocked());
+        }
+        canvas.style.touchAction = 'none';
 
-  const handleRecallDone = () => {
-    const shapesDrawn = detectShapeCount(recallStrokes);
-    const recallPct   = Math.min(100,Math.round((shapesDrawn/SHAPES.length)*100));
-    setRecallResults({shapesDrawn, totalShapes:SHAPES.length, recallPct});
-    setPhase('done');
-  };
+        function onDown(e) {
+            if(isLocked()) return; e.preventDefault();
+            drawingState.active = true; drawingState.current = [getPos(e, canvas)];
+        }
+        function onMove(e) {
+            if(!drawingState.active || isLocked()) return; e.preventDefault();
+            drawingState.current.push(getPos(e, canvas)); rerender();
+        }
+        function onUp(e) {
+            if(!drawingState.active) return; e.preventDefault();
+            drawingState.active = false;
+            if(drawingState.current.length > 2) onAddStroke(drawingState.current.slice());
+            drawingState.current = []; rerender();
+        }
 
-  const avgCopy = allCopyScores.length ? Math.round(allCopyScores.reduce((a,s)=>a+s.score,0)/allCopyScores.length) : 0;
+        canvas.addEventListener('mousedown', onDown);
+        canvas.addEventListener('mousemove', onMove);
+        canvas.addEventListener('mouseup', onUp);
+        canvas.addEventListener('mouseleave', onUp);
+        canvas.addEventListener('touchstart', onDown);
+        canvas.addEventListener('touchmove', onMove);
+        canvas.addEventListener('touchend', onUp);
 
-  // TRANSITION
-  if(phase==='transition') return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen bg-white px-6 text-center" dir="rtl">
-      <div className="text-5xl mb-4">&#x1F9E0;</div>
-      <h2 className="text-2xl font-bold mb-3">כל הכבוד! סיימת את שלב ההעתקה</h2>
-      <p className="text-gray-500 mb-6 max-w-sm">עכשיו — <strong>ללא הסתכלות</strong> — נסה לצייר את כל הצורות שאתה זוכר, בכל סדר.</p>
-      <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 mb-8 text-sm text-amber-800 max-w-xs">
-        אל תסתכל אחורה על הצורות!
-      </div>
-      <button onClick={()=>setPhase('recall')} className="px-8 py-3 bg-black text-white rounded-xl text-lg font-semibold hover:bg-gray-800">
-        התחל שלב זיכרון
-      </button>
-    </div>
-  );
+        return rerender;
+    }
 
-  // RECALL
-  if(phase==='recall') return (
-    <div className="flex flex-col w-screen h-screen bg-white overflow-hidden" dir="rtl">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-gray-50 shrink-0">
-        <span className="text-sm font-semibold text-gray-700">שלב זיכרון — צייר את כל מה שאתה זוכר</span>
-        <div className="flex gap-2">
-          {recallStrokes.length>0 && <button onClick={()=>setRecallStrokes([])} className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100">נקה</button>}
-          {recallStrokes.length>0 && <button onClick={handleRecallDone} className="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800">סיים והערכה</button>}
-        </div>
-      </div>
-      <div className="text-center text-xs text-gray-400 py-1 shrink-0">צייר את כל הצורות שזוכר — בכל מקום על הדף</div>
-      <div className="flex-1">
-        <SketchCanvas strokes={recallStrokes} onAddStroke={s=>setRecallStrokes(p=>[...p,s])} locked={false} overlayScore={null} />
-      </div>
-    </div>
-  );
+    // ---- RENDER UI ----
+    var root = document.getElementById('root');
+    var rerenderSketchFn = null;
 
-  // DONE
-  if(phase==='done' && recallResults) {
-    const {shapesDrawn,totalShapes,recallPct}=recallResults;
-    const memFeedback = shapesDrawn>=5?'זיכרון מצוין!':shapesDrawn>=4?'זיכרון טוב מאוד':shapesDrawn>=3?'זיכרון סביר':shapesDrawn>=2?'כדאי לתרגל':'קשה לזכור — זה בסדר';
-    const overall = Math.round(avgCopy*0.6+recallPct*0.4);
-    return (
-      <div className="flex flex-col items-center justify-center w-screen h-screen bg-white px-6 overflow-y-auto" dir="rtl">
-        <div className="w-full max-w-sm py-8">
-          <div className="text-center mb-6"><div className="text-4xl mb-2">&#x1F4CA;</div><h2 className="text-2xl font-bold">תוצאות המבחן</h2></div>
-          <div className="bg-gray-50 rounded-2xl p-4 mb-4">
-            <div className="text-sm font-bold text-gray-500 mb-3">שלב העתקה</div>
-            {allCopyScores.map((s,i)=>(
-              <div key={i} className="flex justify-between items-center mb-2">
-                <span className="text-gray-600 text-sm">{s.name}</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-blue-500 rounded-full" style={{width:`${s.score}%`}}/></div>
-                  <span className="text-sm font-bold w-10 text-left">{s.score}</span>
-                </div>
-              </div>
-            ))}
-            <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between">
-              <span className="font-semibold text-gray-700">ממוצע</span>
-              <span className="font-bold text-blue-600">{avgCopy}/100</span>
-            </div>
-          </div>
-          <div className="bg-amber-50 rounded-2xl p-4 mb-4">
-            <div className="text-sm font-bold text-amber-700 mb-3">שלב זיכרון</div>
-            <div className="flex justify-between mb-2"><span className="text-gray-600 text-sm">צורות שנזכרו</span><span className="font-bold">{shapesDrawn} / {totalShapes}</span></div>
-            <div className="w-full h-3 bg-amber-200 rounded-full overflow-hidden mb-2"><div className="h-full bg-amber-500 rounded-full" style={{width:`${recallPct}%`}}/></div>
-            <div className="flex justify-between mt-2 pt-2 border-t border-amber-200">
-              <span className="text-sm text-amber-800">{shapesDrawn} מתוך {totalShapes}</span>
-              <span className="text-sm font-bold text-amber-700">{memFeedback}</span>
-            </div>
-          </div>
-          <div className="bg-black text-white rounded-2xl p-4 mb-6 text-center">
-            <div className="text-sm opacity-60 mb-1">ציון כולל</div>
-            <div className="text-4xl font-bold">{overall}/100</div>
-          </div>
-          <button onClick={()=>{setPhase('copy');setShapeIdx(0);setAllCopyScores([]);setCopyStrokes([]);setCopyScore(null);setRecallStrokes([]);setRecallResults(null);}}
-            className="w-full py-3 bg-gray-100 text-gray-800 rounded-xl font-semibold hover:bg-gray-200">התחל מחדש</button>
-        </div>
-      </div>
-    );
-  }
+    function render() {
+        var shape = SHAPES[state.shapeIdx];
 
-  // COPY
-  return (
-    <div className="flex flex-col w-screen h-screen bg-white overflow-hidden" dir="rtl">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-gray-50 shrink-0">
-        <span className="text-sm font-semibold text-gray-600">{shape.name} — {shapeIdx+1}/{SHAPES.length}</span>
-        <div className="flex gap-2">
-          {copyScore==null && copyStrokes.length>0 && <>
-            <button onClick={()=>setCopyStrokes([])} className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100">נקה</button>
-            <button onClick={handleCheck} className="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800">בדוק</button>
-          </>}
-          {copyScore!=null && <>
-            <button onClick={()=>{setCopyStrokes([]);setCopyScore(null);}} className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100">נסה שוב</button>
-            <button onClick={handleNext} className="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800">
-              {shapeIdx+1<SHAPES.length?'הבא':'המשך לזיכרון'}
-            </button>
-          </>}
-        </div>
-      </div>
-      <div className="w-full h-1 bg-gray-100 shrink-0">
-        <div className="h-full bg-blue-500 transition-all" style={{width:`${(shapeIdx/SHAPES.length)*100}%`}}/>
-      </div>
-      <div className="shrink-0 border-b-4 border-dashed border-gray-300 bg-gray-50 flex flex-col" style={{height:'45%'}}>
-        <div className="text-center text-xs text-gray-400 pt-1 shrink-0">— העתק את הצורה הזו —</div>
-        <div className="flex-1">
-          <ShapeCanvas shapeFn={shape.draw} />
-        </div>
-      </div>
-      <div className="flex flex-col flex-1">
-        <div className="text-center text-xs text-gray-400 pt-1 shrink-0">— צייר כאן —</div>
-        <div className="flex-1" data-sketch>
-          <SketchCanvas
-            strokes={copyStrokes}
-            onAddStroke={s=>setCopyStrokes(p=>[...p,s])}
-            locked={copyScore!=null}
-            overlayScore={copyScore}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
+        // TRANSITION
+        if(state.phase === 'transition') {
+            root.innerHTML =
+                '<div class="flex flex-col items-center justify-center w-screen h-screen px-6 text-center" dir="rtl">' +
+                    '<div class="text-5xl mb-4">&#x1F9E0;</div>' +
+                    '<h2 class="text-2xl font-bold mb-3">כל הכבוד! סיימת את שלב ההעתקה</h2>' +
+                    '<p class="text-gray-500 mb-6 max-w-sm">עכשיו — <strong>ללא הסתכלות</strong> — נסה לצייר את כל הצורות שאתה זוכר, בכל סדר.</p>' +
+                    '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:0.75rem;padding:0.75rem 1.25rem;margin-bottom:2rem;font-size:0.875rem;color:#92400e;max-width:20rem;">' +
+                        'אל תסתכל אחורה על הצורות!' +
+                    '</div>' +
+                    '<button id="btn-recall" class="btn-lg">התחל שלב זיכרון</button>' +
+                '</div>';
+            document.getElementById('btn-recall').onclick = function() { state.phase='recall'; render(); };
+            return;
+        }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<BenderTest />);
+        // RECALL
+        if(state.phase === 'recall') {
+            root.innerHTML =
+                '<div class="flex flex-col w-screen h-screen overflow-hidden" dir="rtl">' +
+                    '<div class="flex items-center justify-between px-4 py-2 bg-gray-50 shrink-0" style="border-bottom:1px solid #e5e7eb;">' +
+                        '<span class="text-sm font-semibold text-gray-700">שלב זיכרון — צייר את כל מה שאתה זוכר</span>' +
+                        '<div class="flex gap-2">' +
+                            '<button id="btn-recall-clear" class="btn-outline hidden">נקה</button>' +
+                            '<button id="btn-recall-done" class="btn-primary hidden">סיים והערכה</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="text-center text-xs text-gray-400 py-1 shrink-0">צייר את כל הצורות שזוכר — בכל מקום על הדף</div>' +
+                    '<div class="flex-1" style="position:relative;">' +
+                        '<canvas id="recall-canvas" style="width:100%;height:100%;cursor:crosshair;"></canvas>' +
+                    '</div>' +
+                '</div>';
+
+            var rc = document.getElementById('recall-canvas');
+            setupCanvas(rc);
+            var rerenderRecall = attachDrawing(rc,
+                function(){return state.recallStrokes;},
+                function(s){
+                    state.recallStrokes.push(s);
+                    updateRecallButtons();
+                    rerenderRecall();
+                },
+                function(){return false;},
+                function(){return null;}
+            );
+            rerenderRecall();
+
+            function updateRecallButtons() {
+                var c = document.getElementById('btn-recall-clear');
+                var d = document.getElementById('btn-recall-done');
+                if(c && d) {
+                    if(state.recallStrokes.length > 0) {
+                        c.classList.remove('hidden'); d.classList.remove('hidden');
+                    } else {
+                        c.classList.add('hidden'); d.classList.add('hidden');
+                    }
+                }
+            }
+            document.getElementById('btn-recall-clear').onclick = function() {
+                state.recallStrokes = []; updateRecallButtons(); rerenderRecall();
+            };
+            document.getElementById('btn-recall-done').onclick = function() {
+                var shapesDrawn = detectShapeCount(state.recallStrokes);
+                var recallPct = Math.min(100, Math.round((shapesDrawn/SHAPES.length)*100));
+                state.recallResults = {shapesDrawn:shapesDrawn, totalShapes:SHAPES.length, recallPct:recallPct};
+                state.phase = 'done'; render();
+            };
+            updateRecallButtons();
+
+            window.addEventListener('resize', function onResizeRecall() {
+                if(state.phase !== 'recall') { window.removeEventListener('resize', onResizeRecall); return; }
+                setupCanvas(rc); rerenderRecall();
+            });
+            return;
+        }
+
+        // DONE
+        if(state.phase === 'done' && state.recallResults) {
+            var r = state.recallResults;
+            var avgCopy = state.allCopyScores.length ? Math.round(state.allCopyScores.reduce(function(a,s){return a+s.score;},0)/state.allCopyScores.length) : 0;
+            var memFeedback = r.shapesDrawn>=5?'זיכרון מצוין!':r.shapesDrawn>=4?'זיכרון טוב מאוד':r.shapesDrawn>=3?'זיכרון סביר':r.shapesDrawn>=2?'כדאי לתרגל':'קשה לזכור — זה בסדר';
+            var overall = Math.round(avgCopy*0.6 + r.recallPct*0.4);
+
+            var scoresHtml = '';
+            state.allCopyScores.forEach(function(s) {
+                scoresHtml +=
+                    '<div class="flex justify-between items-center mb-2">' +
+                        '<span class="text-gray-600 text-sm">' + s.name + '</span>' +
+                        '<div class="flex items-center gap-2">' +
+                            '<div class="score-bar-track"><div class="score-bar-fill" style="width:'+s.score+'%"></div></div>' +
+                            '<span class="text-sm font-bold" style="width:2.5rem;text-align:left;">'+s.score+'</span>' +
+                        '</div>' +
+                    '</div>';
+            });
+
+            root.innerHTML =
+                '<div class="flex flex-col items-center justify-center w-screen h-screen px-6 overflow-y-auto" dir="rtl">' +
+                    '<div class="w-full max-w-sm py-8">' +
+                        '<div class="text-center mb-6"><div class="text-4xl mb-2">&#x1F4CA;</div><h2 class="text-2xl font-bold">תוצאות המבחן</h2></div>' +
+                        '<div class="bg-gray-50 rounded-2xl p-4 mb-4">' +
+                            '<div class="text-sm font-bold text-gray-500 mb-3">שלב העתקה</div>' +
+                            scoresHtml +
+                            '<div style="border-top:1px solid #e5e7eb;margin-top:0.75rem;padding-top:0.75rem;" class="flex justify-between">' +
+                                '<span class="font-semibold text-gray-700">ממוצע</span>' +
+                                '<span class="font-bold text-blue-600">'+avgCopy+'/100</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="background:#fffbeb;" class="rounded-2xl p-4 mb-4">' +
+                            '<div class="text-sm font-bold text-amber-700 mb-3">שלב זיכרון</div>' +
+                            '<div class="flex justify-between mb-2"><span class="text-gray-600 text-sm">צורות שנזכרו</span><span class="font-bold">'+r.shapesDrawn+' / '+r.totalShapes+'</span></div>' +
+                            '<div class="recall-bar-track mb-2"><div class="recall-bar-fill" style="width:'+r.recallPct+'%"></div></div>' +
+                            '<div class="flex justify-between mt-2 pt-2" style="border-top:1px solid #fde68a;">' +
+                                '<span class="text-sm text-amber-800">'+r.shapesDrawn+' מתוך '+r.totalShapes+'</span>' +
+                                '<span class="text-sm font-bold text-amber-700">'+memFeedback+'</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="bg-black text-white rounded-2xl p-4 mb-6 text-center">' +
+                            '<div class="text-sm opacity-60 mb-1">ציון כולל</div>' +
+                            '<div class="text-4xl font-bold">'+overall+'/100</div>' +
+                        '</div>' +
+                        '<button id="btn-restart" style="width:100%;padding:0.75rem;background:#f3f4f6;color:#1f2937;border-radius:0.75rem;font-weight:600;">התחל מחדש</button>' +
+                    '</div>' +
+                '</div>';
+
+            document.getElementById('btn-restart').onclick = function() {
+                state.phase='copy'; state.shapeIdx=0; state.allCopyScores=[]; state.copyStrokes=[];
+                state.copyScore=null; state.recallStrokes=[]; state.recallResults=null;
+                render();
+            };
+            return;
+        }
+
+        // COPY PHASE
+        root.innerHTML =
+            '<div class="flex flex-col w-screen h-screen overflow-hidden" dir="rtl">' +
+                '<div class="flex items-center justify-between px-4 py-2 bg-gray-50 shrink-0" style="border-bottom:1px solid #e5e7eb;">' +
+                    '<span class="text-sm font-semibold text-gray-600">' + shape.name + ' — ' + (state.shapeIdx+1) + '/' + SHAPES.length + '</span>' +
+                    '<div class="flex gap-2" id="copy-buttons"></div>' +
+                '</div>' +
+                '<div class="progress-bar shrink-0"><div class="progress-fill" style="width:' + ((state.shapeIdx/SHAPES.length)*100) + '%;"></div></div>' +
+                '<div class="shrink-0 bg-gray-50 flex flex-col" style="height:45%;border-bottom:4px dashed #d1d5db;">' +
+                    '<div class="text-center text-xs text-gray-400 pt-1 shrink-0">— העתק את הצורה הזו —</div>' +
+                    '<div class="flex-1" style="position:relative;"><canvas id="shape-canvas" style="width:100%;height:100%;"></canvas></div>' +
+                '</div>' +
+                '<div class="flex flex-col flex-1">' +
+                    '<div class="text-center text-xs text-gray-400 pt-1 shrink-0">— צייר כאן —</div>' +
+                    '<div class="flex-1" id="sketch-area" style="position:relative;"><canvas id="sketch-canvas" style="width:100%;height:100%;cursor:crosshair;"></canvas></div>' +
+                '</div>' +
+            '</div>';
+
+        // Draw the reference shape
+        var shapeCanvas = document.getElementById('shape-canvas');
+        renderShapeCanvas(shapeCanvas, shape.draw);
+        setTimeout(function(){ renderShapeCanvas(shapeCanvas, shape.draw); }, 50);
+
+        // Setup sketch canvas
+        var sketchCanvas = document.getElementById('sketch-canvas');
+        setupCanvas(sketchCanvas);
+
+        rerenderSketchFn = attachDrawing(sketchCanvas,
+            function(){return state.copyStrokes;},
+            function(s){
+                state.copyStrokes.push(s);
+                updateCopyButtons();
+                rerenderSketchFn();
+            },
+            function(){return state.copyScore != null;},
+            function(){return state.copyScore;}
+        );
+        rerenderSketchFn();
+
+        function updateCopyButtons() {
+            var container = document.getElementById('copy-buttons');
+            if(!container) return;
+            container.innerHTML = '';
+            if(state.copyScore == null && state.copyStrokes.length > 0) {
+                var clearBtn = document.createElement('button');
+                clearBtn.className = 'btn-outline'; clearBtn.textContent = 'נקה';
+                clearBtn.onclick = function(){ state.copyStrokes=[]; updateCopyButtons(); rerenderSketchFn(); };
+                var checkBtn = document.createElement('button');
+                checkBtn.className = 'btn-primary'; checkBtn.textContent = 'בדוק';
+                checkBtn.onclick = function(){
+                    var pts = []; state.copyStrokes.forEach(function(s){pts=pts.concat(s);});
+                    var w = sketchCanvas.offsetWidth, h = sketchCanvas.offsetHeight;
+                    state.copyScore = evaluateShape(shape.id, pts, w, h);
+                    updateCopyButtons(); rerenderSketchFn();
+                };
+                container.appendChild(clearBtn);
+                container.appendChild(checkBtn);
+            }
+            if(state.copyScore != null) {
+                var retryBtn = document.createElement('button');
+                retryBtn.className = 'btn-outline'; retryBtn.textContent = 'נסה שוב';
+                retryBtn.onclick = function(){ state.copyStrokes=[]; state.copyScore=null; updateCopyButtons(); rerenderSketchFn(); };
+                var nextBtn = document.createElement('button');
+                nextBtn.className = 'btn-primary';
+                nextBtn.textContent = (state.shapeIdx+1 < SHAPES.length) ? 'הבא' : 'המשך לזיכרון';
+                nextBtn.onclick = function(){
+                    state.allCopyScores.push({name:shape.name, score:state.copyScore||0});
+                    if(state.shapeIdx+1 >= SHAPES.length) { state.phase='transition'; }
+                    else { state.shapeIdx++; state.copyStrokes=[]; state.copyScore=null; }
+                    render();
+                };
+                container.appendChild(retryBtn);
+                container.appendChild(nextBtn);
+            }
+        }
+        updateCopyButtons();
+
+        window.addEventListener('resize', function onResizeCopy() {
+            if(state.phase !== 'copy') { window.removeEventListener('resize', onResizeCopy); return; }
+            renderShapeCanvas(shapeCanvas, shape.draw);
+            setupCanvas(sketchCanvas); rerenderSketchFn();
+        });
+    }
+
+    render();
+})();
 </script>
 </body>
 </html>
