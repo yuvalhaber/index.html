@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבחן בנדר - Bender Visual Motor Gestalt Test</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+const SHAPES = [
+  {
+    id: 'A', name: 'צורה A',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(w*0.33, h*0.5, Math.min(w,h)*0.2, 0, Math.PI*2); ctx.stroke();
+      const s = Math.min(w,h)*0.38;
+      ctx.strokeRect(w*0.53, h*0.5-s/2, s, s);
+    },
+  },
+  {
+    id: '1', name: 'צורה 1',
+    draw: (ctx, w, h) => {
+      ctx.fillStyle = '#111';
+      const n=12, x0=w*0.1, x1=w*0.9, step=(x1-x0)/(n-1);
+      for(let i=0;i<n;i++){ctx.beginPath();ctx.arc(x0+i*step,h*0.5,6,0,Math.PI*2);ctx.fill();}
+    },
+  },
+  {
+    id: '2', name: 'צורה 2',
+    draw: (ctx, w, h) => {
+      ctx.fillStyle = '#111';
+      for(let r=0;r<3;r++) for(let c=0;c<6;c++){
+        ctx.beginPath();
+        ctx.arc(w*0.12+c*(w*0.13)+r*(w*0.07), h*0.3+r*(h*0.2), 6, 0, Math.PI*2);
+        ctx.fill();
+      }
+    },
+  },
+  {
+    id: '4', name: 'צורה 4',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(w*0.12,h*0.72); ctx.lineTo(w*0.12,h*0.28);
+      ctx.lineTo(w*0.42,h*0.28); ctx.lineTo(w*0.42,h*0.72);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(w*0.54,h*0.28);
+      ctx.bezierCurveTo(w*0.72,h*0.28,w*0.58,h*0.72,w*0.82,h*0.72);
+      ctx.stroke();
+    },
+  },
+  {
+    id: '8', name: 'צורה 8',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.setLineDash([]);
+      const cx=w/2,cy=h/2,ow=w*0.37,oh=h*0.4;
+      ctx.beginPath(); ctx.moveTo(cx,cy-oh); ctx.lineTo(cx+ow,cy); ctx.lineTo(cx,cy+oh); ctx.lineTo(cx-ow,cy); ctx.closePath(); ctx.stroke();
+      const iw=ow*0.42,ih=oh*0.38;
+      ctx.beginPath(); ctx.moveTo(cx,cy-ih); ctx.lineTo(cx+iw,cy); ctx.lineTo(cx,cy+ih); ctx.lineTo(cx-iw,cy); ctx.closePath(); ctx.stroke();
+    },
+  },
+];
+
+function getFeedback(score) {
+  if (score>=90) return 'מדהים!';
+  if (score>=75) return 'מצוין!';
+  if (score>=60) return 'טוב!';
+  if (score>=40) return 'לא רע';
+  return 'המשך לנסות';
+}
+
+function computeRoundness(pts) {
+  if(pts.length<5) return 0;
+  const cx=pts.reduce((a,p)=>a+p.x,0)/pts.length;
+  const cy=pts.reduce((a,p)=>a+p.y,0)/pts.length;
+  const radii=pts.map(p=>Math.sqrt((p.x-cx)**2+(p.y-cy)**2));
+  const avg=radii.reduce((a,b)=>a+b,0)/radii.length;
+  if(avg<5) return 0;
+  const v=Math.sqrt(radii.reduce((a,r)=>a+(r-avg)**2,0)/radii.length);
+  return Math.max(0,100-(v/avg)*150);
+}
+
+function evaluateShape(id, pts, w, h) {
+  if(pts.length<10) return 0;
+  if(id==='A'){
+    const left=pts.filter(p=>p.x<w/2), right=pts.filter(p=>p.x>=w/2);
+    return Math.min(100,Math.round(computeRoundness(left)*0.6+(left.length>5&&right.length>5?40:0)));
+  }
+  if(id==='1'){
+    const ys=pts.map(p=>p.y),avg=ys.reduce((a,b)=>a+b,0)/ys.length;
+    const yv=Math.sqrt(ys.reduce((a,y)=>a+(y-avg)**2,0)/ys.length);
+    const xs=pts.map(p=>p.x), span=Math.max(...xs)-Math.min(...xs);
+    return Math.min(100,Math.round(Math.max(0,100-(yv/(h*0.008))*10)*0.6+(span/(w*0.6))*40));
+  }
+  if(id==='2'){
+    const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
+    return Math.min(100,Math.round(((Math.max(...ys)-Math.min(...ys))/(h*0.25))*50+((Math.max(...xs)-Math.min(...xs))/(w*0.5))*50));
+  }
+  if(id==='4'){
+    const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
+    return Math.min(100,Math.round(((Math.max(...xs)-Math.min(...xs))>w*0.35?50:25)+((Math.max(...ys)-Math.min(...ys))>h*0.25?50:25)));
+  }
+  if(id==='8') return Math.min(100,Math.round(computeRoundness(pts)));
+  return 50;
+}
+
+function SketchCanvas({ strokes, onAddStroke, locked, overlayScore }) {
+  const ref = useRef(null);
+  const drawing = useRef(false);
+  const current = useRef([]);
+
+  const setup = useCallback(() => {
+    const c = ref.current; if(!c) return;
+    const dpr = window.devicePixelRatio||1;
+    c.width  = c.offsetWidth  * dpr;
+    c.height = c.offsetHeight * dpr;
+    c.getContext('2d').scale(dpr,dpr);
+  }, []);
+
+  const render = useCallback(() => {
+    const c = ref.current; if(!c) return;
+    const ctx = c.getContext('2d');
+    const w=c.offsetWidth, h=c.offsetHeight;
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='#f0f0f0'; ctx.lineWidth=1;
+    for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+    const drawPts = (pts, color) => {
+      if(pts.length<2) return;
+      ctx.strokeStyle=color; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+      for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
+      ctx.stroke();
+    };
+    const color = overlayScore!=null ? '#2563eb' : '#111';
+    strokes.forEach(s=>drawPts(s,color));
+    drawPts(current.current, '#111');
+    if(overlayScore!=null){
+      ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.fillRect(0,0,w,h);
+      strokes.forEach(s=>drawPts(s,'#2563eb'));
+      ctx.fillStyle='#111';
+      ctx.font=`bold ${Math.round(h*0.2)}px system-ui`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(`${overlayScore}/100`, w/2, h/2-h*0.1);
+      ctx.font=`${Math.round(h*0.075)}px system-ui`;
+      ctx.fillText(getFeedback(overlayScore), w/2, h/2+h*0.09);
+    }
+  }, [strokes, overlayScore]);
+
+  useEffect(() => { setup(); render(); }, []);
+  useEffect(() => { render(); }, [strokes, overlayScore]);
+  useEffect(() => {
+    const c = ref.current; if(!c) return;
+    const onResize = () => { setup(); render(); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [render]);
+
+  const pos = (e) => {
+    const r = ref.current.getBoundingClientRect();
+    if(e.touches) return {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top};
+    return {x:e.clientX-r.left, y:e.clientY-r.top};
+  };
+  const onDown = (e) => { if(locked) return; e.preventDefault(); drawing.current=true; current.current=[pos(e)]; };
+  const onMove = (e) => { if(!drawing.current||locked) return; e.preventDefault(); current.current.push(pos(e)); render(); };
+  const onUp   = (e) => {
+    if(!drawing.current) return; e.preventDefault(); drawing.current=false;
+    if(current.current.length>2) onAddStroke([...current.current]);
+    current.current=[]; render();
+  };
+
+  return (
+    <canvas ref={ref} className="w-full h-full"
+      style={{cursor:locked?'default':'crosshair', touchAction:'none'}}
+      onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp}
+      onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}
+    />
+  );
+}
+
+function ShapeCanvas({ shapeFn }) {
+  const ref = useRef(null);
+  const paint = useCallback(() => {
+    const c = ref.current; if(!c) return;
+    const w=c.offsetWidth, h=c.offsetHeight;
+    if(w===0||h===0) return;
+    const dpr=window.devicePixelRatio||1;
+    c.width=w*dpr; c.height=h*dpr;
+    const ctx=c.getContext('2d');
+    ctx.scale(dpr,dpr);
+    ctx.fillStyle='#fafafa'; ctx.fillRect(0,0,w,h);
+    shapeFn(ctx,w,h);
+  }, [shapeFn]);
+
+  useEffect(() => {
+    paint();
+    const id = setTimeout(paint, 50);
+    return () => clearTimeout(id);
+  }, [paint]);
+
+  useEffect(() => {
+    const onResize = () => paint();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [paint]);
+
+  return <canvas ref={ref} className="w-full h-full" />;
+}
+
+function detectShapeCount(strokes) {
+  if(!strokes.length) return 0;
+  const groups = [];
+  strokes.forEach(s => {
+    if(!s.length) return;
+    const mx=s[Math.floor(s.length/2)].x, my=s[Math.floor(s.length/2)].y;
+    let found=false;
+    for(const g of groups){
+      if(Math.abs(g.cx-mx)<130&&Math.abs(g.cy-my)<130){
+        g.pts.push(...s); g.cx=g.pts.reduce((a,p)=>a+p.x,0)/g.pts.length; g.cy=g.pts.reduce((a,p)=>a+p.y,0)/g.pts.length;
+        found=true; break;
+      }
+    }
+    if(!found) groups.push({cx:mx,cy:my,pts:[...s]});
+  });
+  return groups.length;
+}
+
+function BenderTest() {
+  const [phase, setPhase]           = useState('copy');
+  const [shapeIdx, setShapeIdx]     = useState(0);
+  const [copyStrokes, setCopyStrokes] = useState([]);
+  const [copyScore, setCopyScore]   = useState(null);
+  const [allCopyScores, setAllCopyScores] = useState([]);
+  const [recallStrokes, setRecallStrokes] = useState([]);
+  const [recallResults, setRecallResults] = useState(null);
+
+  const shape = SHAPES[shapeIdx];
+
+  const handleCheck = () => {
+    const pts = copyStrokes.flat();
+    const c = document.querySelector('[data-sketch]');
+    const w = c ? c.offsetWidth : 400;
+    const h = c ? c.offsetHeight : 300;
+    setCopyScore(evaluateShape(shape.id, pts, w, h));
+  };
+
+  const handleNext = () => {
+    const newScores = [...allCopyScores, {name:shape.name, score:copyScore??0}];
+    setAllCopyScores(newScores);
+    if(shapeIdx+1>=SHAPES.length){ setPhase('transition'); }
+    else { setShapeIdx(i=>i+1); setCopyStrokes([]); setCopyScore(null); }
+  };
+
+  const handleRecallDone = () => {
+    const shapesDrawn = detectShapeCount(recallStrokes);
+    const recallPct   = Math.min(100,Math.round((shapesDrawn/SHAPES.length)*100));
+    setRecallResults({shapesDrawn, totalShapes:SHAPES.length, recallPct});
+    setPhase('done');
+  };
+
+  const avgCopy = allCopyScores.length ? Math.round(allCopyScores.reduce((a,s)=>a+s.score,0)/allCopyScores.length) : 0;
+
+  // TRANSITION
+  if(phase==='transition') return (
+    <div className="flex flex-col items-center justify-center w-screen h-screen bg-white px-6 text-center" dir="rtl">
+      <div className="text-5xl mb-4">&#x1F9E0;</div>
+      <h2 className="text-2xl font-bold mb-3">כל הכבוד! סיימת את שלב ההעתקה</h2>
+      <p className="text-gray-500 mb-6 max-w-sm">עכשיו — <strong>ללא הסתכלות</strong> — נסה לצייר את כל הצורות שאתה זוכר, בכל סדר.</p>
+      <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 mb-8 text-sm text-amber-800 max-w-xs">
+        אל תסתכל אחורה על הצורות!
+      </div>
+      <button onClick={()=>setPhase('recall')} className="px-8 py-3 bg-black text-white rounded-xl text-lg font-semibold hover:bg-gray-800">
+        התחל שלב זיכרון
+      </button>
+    </div>
+  );
+
+  // RECALL
+  if(phase==='recall') return (
+    <div className="flex flex-col w-screen h-screen bg-white overflow-hidden" dir="rtl">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-gray-50 shrink-0">
+        <span className="text-sm font-semibold text-gray-700">שלב זיכרון — צייר את כל מה שאתה זוכר</span>
+        <div className="flex gap-2">
+          {recallStrokes.length>0 && <button onClick={()=>setRecallStrokes([])} className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100">נקה</button>}
+          {recallStrokes.length>0 && <button onClick={handleRecallDone} className="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800">סיים והערכה</button>}
+        </div>
+      </div>
+      <div className="text-center text-xs text-gray-400 py-1 shrink-0">צייר את כל הצורות שזוכר — בכל מקום על הדף</div>
+      <div className="flex-1">
+        <SketchCanvas strokes={recallStrokes} onAddStroke={s=>setRecallStrokes(p=>[...p,s])} locked={false} overlayScore={null} />
+      </div>
+    </div>
+  );
+
+  // DONE
+  if(phase==='done' && recallResults) {
+    const {shapesDrawn,totalShapes,recallPct}=recallResults;
+    const memFeedback = shapesDrawn>=5?'זיכרון מצוין!':shapesDrawn>=4?'זיכרון טוב מאוד':shapesDrawn>=3?'זיכרון סביר':shapesDrawn>=2?'כדאי לתרגל':'קשה לזכור — זה בסדר';
+    const overall = Math.round(avgCopy*0.6+recallPct*0.4);
+    return (
+      <div className="flex flex-col items-center justify-center w-screen h-screen bg-white px-6 overflow-y-auto" dir="rtl">
+        <div className="w-full max-w-sm py-8">
+          <div className="text-center mb-6"><div className="text-4xl mb-2">&#x1F4CA;</div><h2 className="text-2xl font-bold">תוצאות המבחן</h2></div>
+          <div className="bg-gray-50 rounded-2xl p-4 mb-4">
+            <div className="text-sm font-bold text-gray-500 mb-3">שלב העתקה</div>
+            {allCopyScores.map((s,i)=>(
+              <div key={i} className="flex justify-between items-center mb-2">
+                <span className="text-gray-600 text-sm">{s.name}</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-blue-500 rounded-full" style={{width:`${s.score}%`}}/></div>
+                  <span className="text-sm font-bold w-10 text-left">{s.score}</span>
+                </div>
+              </div>
+            ))}
+            <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between">
+              <span className="font-semibold text-gray-700">ממוצע</span>
+              <span className="font-bold text-blue-600">{avgCopy}/100</span>
+            </div>
+          </div>
+          <div className="bg-amber-50 rounded-2xl p-4 mb-4">
+            <div className="text-sm font-bold text-amber-700 mb-3">שלב זיכרון</div>
+            <div className="flex justify-between mb-2"><span className="text-gray-600 text-sm">צורות שנזכרו</span><span className="font-bold">{shapesDrawn} / {totalShapes}</span></div>
+            <div className="w-full h-3 bg-amber-200 rounded-full overflow-hidden mb-2"><div className="h-full bg-amber-500 rounded-full" style={{width:`${recallPct}%`}}/></div>
+            <div className="flex justify-between mt-2 pt-2 border-t border-amber-200">
+              <span className="text-sm text-amber-800">{shapesDrawn} מתוך {totalShapes}</span>
+              <span className="text-sm font-bold text-amber-700">{memFeedback}</span>
+            </div>
+          </div>
+          <div className="bg-black text-white rounded-2xl p-4 mb-6 text-center">
+            <div className="text-sm opacity-60 mb-1">ציון כולל</div>
+            <div className="text-4xl font-bold">{overall}/100</div>
+          </div>
+          <button onClick={()=>{setPhase('copy');setShapeIdx(0);setAllCopyScores([]);setCopyStrokes([]);setCopyScore(null);setRecallStrokes([]);setRecallResults(null);}}
+            className="w-full py-3 bg-gray-100 text-gray-800 rounded-xl font-semibold hover:bg-gray-200">התחל מחדש</button>
+        </div>
+      </div>
+    );
+  }
+
+  // COPY
+  return (
+    <div className="flex flex-col w-screen h-screen bg-white overflow-hidden" dir="rtl">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-gray-50 shrink-0">
+        <span className="text-sm font-semibold text-gray-600">{shape.name} — {shapeIdx+1}/{SHAPES.length}</span>
+        <div className="flex gap-2">
+          {copyScore==null && copyStrokes.length>0 && <>
+            <button onClick={()=>setCopyStrokes([])} className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100">נקה</button>
+            <button onClick={handleCheck} className="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800">בדוק</button>
+          </>}
+          {copyScore!=null && <>
+            <button onClick={()=>{setCopyStrokes([]);setCopyScore(null);}} className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100">נסה שוב</button>
+            <button onClick={handleNext} className="px-3 py-1 text-xs bg-black text-white rounded hover:bg-gray-800">
+              {shapeIdx+1<SHAPES.length?'הבא':'המשך לזיכרון'}
+            </button>
+          </>}
+        </div>
+      </div>
+      <div className="w-full h-1 bg-gray-100 shrink-0">
+        <div className="h-full bg-blue-500 transition-all" style={{width:`${(shapeIdx/SHAPES.length)*100}%`}}/>
+      </div>
+      <div className="shrink-0 border-b-4 border-dashed border-gray-300 bg-gray-50 flex flex-col" style={{height:'45%'}}>
+        <div className="text-center text-xs text-gray-400 pt-1 shrink-0">— העתק את הצורה הזו —</div>
+        <div className="flex-1">
+          <ShapeCanvas shapeFn={shape.draw} />
+        </div>
+      </div>
+      <div className="flex flex-col flex-1">
+        <div className="text-center text-xs text-gray-400 pt-1 shrink-0">— צייר כאן —</div>
+        <div className="flex-1" data-sketch>
+          <SketchCanvas
+            strokes={copyStrokes}
+            onAddStroke={s=>setCopyStrokes(p=>[...p,s])}
+            locked={copyScore!=null}
+            overlayScore={copyScore}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<BenderTest />);
+</script>
+</body>
+</html>
